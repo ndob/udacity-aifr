@@ -54,22 +54,6 @@ def validate(values):
         for j in range(len(expected[i])):
             assert(abs(expected[i][j] - values[i][j]) < 0.001)
 
-def get_possible_moves(motion):
-    possible_vertical_moves = [0]
-    if motion[0] != 0:
-        possible_vertical_moves.append(motion[0])
-
-    possible_horizontal_moves = [0]
-    if motion[1] != 0:
-        possible_horizontal_moves.append(motion[1])
-
-    possible_moves = []
-    for i in range(len(possible_vertical_moves)):
-        for j in range(len(possible_horizontal_moves)):
-            possible_moves.append([possible_vertical_moves[i], possible_horizontal_moves[j]])
-
-    return possible_moves
-
 def normalize(p):
     total_sum = 0
     for i in range(len(p)):
@@ -96,7 +80,6 @@ def sense(p, sensor_right, colors, measurement):
 def move(p, p_move, motion):
     p_stay = 1 - p_move
     q = [[0 for row in range(len(p[0]))] for col in range(len(p))]  
-    moves = get_possible_moves(motion)
 
     for i in range(len(p)):
         for j in range(len(p[i])):
