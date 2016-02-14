@@ -512,10 +512,8 @@ def slam(data, N, num_landmarks, motion_noise, measurement_noise):
 
     omega.value[0][0] = 1.0
     omega.value[1][1] = 1.0
-    xi.value[0][0] = 50.0
-    xi.value[1][0] = 50.0
-
-    data.insert(0, [[], [0, 0]])
+    xi.value[0][0] = world_size / 2.0
+    xi.value[1][0] = world_size / 2.0
 
     for k in range(len(data)):
         motion = data[k][1]
@@ -548,24 +546,22 @@ def slam(data, N, num_landmarks, motion_noise, measurement_noise):
         # motion
         motion_confidence = (1 / motion_noise)
 
-        xi.value[time_index - 2][0] += motion[0] * -1 * motion_confidence
-        xi.value[time_index - 2 + 1][0] += motion[1] * -1 * motion_confidence
-        xi.value[time_index][0] += motion[0] * motion_confidence
-        xi.value[time_index + 1][0] += motion[1] * motion_confidence
+        xi.value[time_index][0] += motion[0] * -1 * motion_confidence
+        xi.value[time_index + 1][0] += motion[1] * -1 * motion_confidence
+        xi.value[time_index + 2][0] += motion[0] * motion_confidence
+        xi.value[time_index + 2 + 1][0] += motion[1] * motion_confidence
 
         omega.value[time_index][time_index] += 1 * motion_confidence
-        omega.value[time_index][time_index - 2] += -1 * motion_confidence
-        omega.value[time_index - 2][time_index] += -1 * motion_confidence
-        omega.value[time_index - 2][time_index - 2] += 1 * motion_confidence
+        omega.value[time_index][time_index + 2] += -1 * motion_confidence
+        omega.value[time_index + 2][time_index] += -1 * motion_confidence
+        omega.value[time_index + 2][time_index + 2] += 1 * motion_confidence
 
         omega.value[time_index + 1][time_index + 1] += 1 * motion_confidence
-        omega.value[time_index + 1][time_index - 2 + 1] += -1 * motion_confidence
-        omega.value[time_index - 2 + 1][time_index + 1] += -1 * motion_confidence
-        omega.value[time_index - 2 + 1][time_index - 2 + 1] += 1 * motion_confidence
-
-
+        omega.value[time_index + 1][time_index + 2 + 1] += -1 * motion_confidence
+        omega.value[time_index + 2 + 1][time_index + 1] += -1 * motion_confidence
+        omega.value[time_index + 2 + 1][time_index + 2 + 1] += 1 * motion_confidence
         
-    omega.show()
+    #omega.show()
     omega_inv = omega.inverse()
     #mu_x = omega_inv * xi_x
     #mu_y = omega_inv * xi_y
@@ -587,7 +583,7 @@ def slam(data, N, num_landmarks, motion_noise, measurement_noise):
 
     
 
-    return omega_inv * xi # Make sure you return mu for grading!
+    return omega_inv * xi # Make sure you return mu for grading!    
         
 ############### ENTER YOUR CODE ABOVE HERE ###################
 
